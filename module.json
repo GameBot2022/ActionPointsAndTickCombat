@@ -1,7 +1,7 @@
 {
-  "name": "tickpoint-combat",
+  "id": "Runequest Glornatha - Replacing Strike Ranks with Action Points and Speed(Ticks)",
   "title": "TickPoint Combat",
-  "description": "A tick-based action point combat system for RuneQuest Glorantha.",
+  "description": "Replacing the standard Runequest Glorantha Strike Rank system with Action Points and Speed.",
   "version": "1.0.0",
   "author": "OpenAI ChatGPT",
   "minimumCoreVersion": "10",
