@@ -1,77 +1,96 @@
-// GM Settings Panel code for the Tickpoint Combat module. This registers and renders settings for Speed and Max AP formulas, toggleable AP tracking outside combat, and supports custom action definitions.
+// File: modules/tickpoint-combat/settings.js
 
-export function registerTickpointSettings() {
-  game.settings.register("tickpoint-combat", "speedFormula", {
+const MODULE_ID = "tickpoint-combat";
+
+export function registerSettings() {
+  // Speed formula
+  game.settings.register(MODULE_ID, "speedFormula", {
     name: "Speed Formula",
-    hint: "Formula using DEX, SIZ, INT (e.g., (DEX + SIZ + INT) / 3)",
+    hint: "Use attributes like DEX, INT, SIZ to calculate Speed. Use 'Math.floor' if needed.",
     scope: "world",
     config: true,
     type: String,
-    default: "(DEX + SIZ + INT)/3"
+    default: "Math.floor((DEX + INT + SIZ) / 3)"
   });
 
-  game.settings.register("tickpoint-combat", "maxAPFormula", {
+  // Max AP formula
+  game.settings.register(MODULE_ID, "maxAPFormula", {
     name: "Max AP Formula",
-    hint: "Formula using DEX, CON, INT (e.g., (DEX + CON + INT) / 3)",
+    hint: "Use attributes like DEX, INT, CON to calculate Maximum AP.",
     scope: "world",
     config: true,
     type: String,
-    default: "(DEX + CON + INT)/3"
+    default: "Math.floor((DEX + INT + CON) / 3)"
   });
 
-  game.settings.register("tickpoint-combat", "apOutsideCombat", {
-    name: "Track Action Points Outside of Combat",
-    hint: "Enable AP system when not actively in a combat encounter.",
+  // Allow tracking AP outside combat
+  game.settings.register(MODULE_ID, "trackAPOutOfCombat", {
+    name: "Track AP Outside Combat",
+    hint: "If enabled, AP will be tracked even when not in combat rounds.",
     scope: "world",
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register("tickpoint-combat", "customActions", {
-    name: "Custom Actions",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: {}
+  // Show Quick Action Panel toggle
+  game.settings.register(MODULE_ID, "showQuickActionPanel", {
+    name: "Show Quick-Action Panel",
+    hint: "Allows players to see the Quick-Action panel on their screen.",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true
   });
 
-  game.settings.registerMenu("tickpoint-combat", "customActionsMenu", {
-    name: "Manage Custom Actions",
-    label: "Configure",
-    hint: "Define and manage custom action types.",
-    icon: "fas fa-cogs",
-    type: CustomActionsConfig,
-    restricted: true
+  // Enable GM custom actions
+  game.settings.register(MODULE_ID, "enableCustomActions", {
+    name: "Enable Custom Actions",
+    hint: "Allow the GM to define custom action types with AP costs.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  // Persisted history setting
+  game.settings.register(MODULE_ID, "persistHistory", {
+    name: "Persist Action History Log",
+    hint: "Keep logs of AP actions across sessions (visible to GMs and players).",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  // Internal flag to check for setup
+  game.settings.register(MODULE_ID, "initialized", {
+    name: "Initialized",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
   });
 }
 
-// Allow GMs to manage custom actions from the UI
-
-class CustomActionsConfig extends FormApplication {
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      id: "custom-actions-config",
-      title: "Custom Actions",
-      template: "modules/tickpoint-combat/templates/custom-actions-config.html",
-      width: 500
-    });
-  }
-
-  getData() {
-    return {
-      actions: game.settings.get("tickpoint-combat", "customActions")
-    };
-  }
-
-  async _updateObject(event, formData) {
-    const actions = {};
-    for (let [key, value] of Object.entries(formData)) {
-      const [, field, index] = key.match(/^actions\[(\w+)\]\[(\d+)\]$/) || [];
-      if (!actions[index]) actions[index] = {};
-      actions[index][field] = value;
-    }
-
-    await game.settings.set("tickpoint-combat", "customActions", Object.values(actions));
+/**
+ * Utility function to compute speed or AP based on formula.
+ * @param {Actor} actor
+ * @param {String} formulaSettingName
+ * @returns {Number}
+ */
+export function evaluateFormula(actor, formulaSettingName) {
+  const formula = game.settings.get(MODULE_ID, formulaSettingName);
+  const data = duplicate(actor.system?.attributes ?? {});
+  try {
+    const scope = { ...data };
+    const keys = Object.keys(scope);
+    const values = Object.values(scope);
+    const fn = new Function(...keys, `return ${formula};`);
+    const result = fn(...values);
+    return Number.isFinite(result) ? Math.floor(result) : 1;
+  } catch (err) {
+    console.warn(`${MODULE_ID} | Invalid formula: ${formula}`);
+    return 1;
   }
 }
