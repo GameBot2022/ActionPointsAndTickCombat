@@ -13,6 +13,40 @@
   margin-left: 6px;
 }
 
+game.settings.register("tickpoint-combat", "showQuickActionPanel", {
+  name: "Show Quick Action Panel",
+  hint: "Toggle visibility of the player-facing Quick Action UI panel.",
+  scope: "world",
+  config: true,
+  type: Boolean,
+  default: true,
+  onChange: (value) => {
+    if (value) {
+      ui.tickpointCombatQuickActionPanel?.render(true);
+    } else {
+      ui.tickpointCombatQuickActionPanel?.close();
+    }
+  }
+});
+
+Hooks.on("ready", () => {
+  if (game.settings.get("tickpoint-combat", "showQuickActionPanel")) {
+    ui.tickpointCombatQuickActionPanel = new TickPointQuickActionPanel();
+    ui.tickpointCombatQuickActionPanel.render(true);
+  }
+});
+
+
+.long-action-progress .progress-bar {
+  transition: width 0.5s ease-in-out;
+  /* existing styles */
+}
+
+
+bar.style.width = `${percent}%`; // This change triggers the CSS transition
+
+
+
 // Continued file: modules/tickpoint-combat/ui/history-log.js
 
 export async function addHistoryLog(actor, description, apCost, privateDetails = false) {
