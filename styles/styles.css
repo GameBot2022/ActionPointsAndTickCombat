@@ -1,3 +1,12 @@
+.quick-action-panel {
+  padding: 8px;
+}
+
+.quick-action-panel .ap-display {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .quick-action-panel .quick-action {
   display: flex;
   align-items: center;
@@ -17,3 +26,11 @@
 .quick-action-panel .action-icon {
   margin-right: 8px;
 }
+
+.quick-action {
+  display: block;
+  width: 100%;
+  margin: 4px 0;
+  padding: 5px;
+}
+
