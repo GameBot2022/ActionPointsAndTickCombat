@@ -71,9 +71,21 @@ export function registerSettings() {
     scope: "client",
     config: true,
     type: Boolean,
-    default: true
+    default: true,
+    onChange: (value) => {
+      const existingApp = ui.windows["tickpoint-quick-actions"];
+      if (value) {
+        if (!existingApp) {
+          import("./ui/quick-actions.js").then(module => {
+            new module.QuickActionPanel().render(true);
+          });
+        }
+      } else {
+        if (existingApp) existingApp.close();
+      }
+    }
   });
-
+  
   // Enable GM custom actions
   game.settings.register(MODULE_ID, "enableCustomActions", {
     name: "Enable Custom Actions",
