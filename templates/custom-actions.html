@@ -1,79 +1,56 @@
 <!-- File: modules/tickpoint-combat/templates/custom-actions.html -->
 
-<section class="custom-action-manager">
-  <h2>Custom Actions</h2>
+<div class="custom-actions-panel">
+  <header class="panel-header">
+    <h2>Custom Actions</h2>
+    <div class="timestamp">Last Refreshed: {{timestamp}}</div>
+  </header>
 
-  <ul class="action-list">
+  <section class="action-list">
     {{#each actions}}
-    <li class="custom-action-entry" data-index="{{@index}}">
-      <div class="entry-main">
-        <strong>{{this.label}}</strong> ({{this.apCost}} AP)
-        {{#if this.icon}}<img src="{{this.icon}}" width="20" height="20" alt="icon" />{{/if}}
-        <em>{{this.description}}</em>
+      <div class="action-entry">
+        <div class="entry-header">
+          <span class="label"><strong>{{label}}</strong></span>
+          <span class="ap-cost">AP: {{apCost}}</span>
+          <div class="entry-controls">
+            <button type="button" class="action-edit" data-index="{{@index}}">Edit</button>
+            <button type="button" class="action-delete" data-index="{{@index}}">Delete</button>
+          </div>
+        </div>
+        <div class="entry-details">
+          <span class="description">{{description}}</span>
+          {{#if icon}}<span class="icon-preview"><img src="{{icon}}" width="24" /></span>{{/if}}
+          {{#if sound}}<span class="sound">🔊 {{sound}}</span>{{/if}}
+        </div>
       </div>
-      <div class="entry-controls">
-        <button type="button" class="action-edit" data-index="{{@index}}">
-          <i class="fas fa-edit"></i> Edit
-        </button>
-        <button type="button" class="action-delete" data-index="{{@index}}">
-          <i class="fas fa-trash"></i> Delete
-        </button>
-      </div>
-    </li>
     {{/each}}
-  </ul>
+  </section>
 
   <hr />
 
-  <form id="add-action-form">
+  <section class="add-action-form">
     <h3>Add New Action</h3>
-    <div class="form-group">
-      <label>Label:</label>
-      <input type="text" name="label" required />
-    </div>
-    <div class="form-group">
-      <label>AP Cost:</label>
-      <input type="number" name="apCost" min="0" required />
-    </div>
-    <div class="form-group">
-      <label>Description:</label>
-      <input type="text" name="description" />
-    </div>
-    <div class="form-group">
-      <label>Icon URL:</label>
-      <input type="text" name="icon" />
-    </div>
-    <div class="form-group">
-      <label>Sound URL:</label>
-      <input type="text" name="sound" />
-    </div>
-    <button type="submit" class="button"><i class="fas fa-plus"></i> Add Action</button>
-  </form>
+    <form id="add-action-form">
+      <input type="text" name="label" placeholder="Label" required />
+      <input type="number" name="apCost" placeholder="AP Cost" required min="0" />
+      <input type="text" name="description" placeholder="Description" />
+      <input type="text" name="icon" placeholder="Icon URL (optional)" />
+      <input type="text" name="sound" placeholder="Sound URL (optional)" />
+      <button type="submit">Add Action</button>
+    </form>
+  </section>
 
   <hr />
 
-  <form id="edit-form">
+  <section class="edit-action-form">
     <h3>Edit Action</h3>
-    <div class="form-group">
-      <label>Label:</label>
-      <input type="text" name="label" required />
-    </div>
-    <div class="form-group">
-      <label>AP Cost:</label>
-      <input type="number" name="apCost" min="0" required />
-    </div>
-    <div class="form-group">
-      <label>Description:</label>
-      <input type="text" name="description" />
-    </div>
-    <div class="form-group">
-      <label>Icon URL:</label>
-      <input type="text" name="icon" />
-    </div>
-    <div class="form-group">
-      <label>Sound URL:</label>
-      <input type="text" name="sound" />
-    </div>
-    <button type="submit" class="button"><i class="fas fa-save"></i> Save Changes</button>
-  </form>
-</section>
+    <form id="edit-form">
+      <input type="text" name="label" placeholder="Label" required />
+      <input type="number" name="apCost" placeholder="AP Cost" required min="0" />
+      <input type="text" name="description" placeholder="Description" />
+      <input type="text" name="icon" placeholder="Icon URL (optional)" />
+      <input type="text" name="sound" placeholder="Sound URL (optional)" />
+      <button type="submit">Update Action</button>
+    </form>
+  </section>
+</div>
