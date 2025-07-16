@@ -25,9 +25,14 @@
     ]
   },
   "scripts": [
+    "scripts/init.js",
     "scripts/combat-tracker.js",
+    "scripts/action-system.js",
     "scripts/history-log.js",
-    "scripts/item-sheet.js"
+    "scripts/gm-settings.js",
+    "scripts/quick-action-ui.js",
+    "scripts/item-sheet.js",
+    "scripts/cleanup.js"
   ],
   "styles": ["styles/tickpoint-combat.css"],
   "esmodules": [],
