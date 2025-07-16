@@ -1,0 +1,101 @@
+/* File: modules/tickpoint-combat/styles/custom-actions.css */
+
+.custom-action-manager {
+  font-size: 14px;
+  padding: 10px;
+}
+
+.custom-action-manager h2,
+.custom-action-manager h3 {
+  margin-top: 0;
+  color: var(--color-text-light-0);
+  border-bottom: 1px solid #666;
+  padding-bottom: 4px;
+}
+
+.action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-action-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.custom-action-entry .entry-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.custom-action-entry .entry-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.custom-action-entry button {
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+form#add-action-form,
+form#edit-form {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #444;
+  border-radius: 5px;
+}
+
+form .form-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+form .form-group label {
+  flex: 0 0 100px;
+  font-weight: bold;
+  color: var(--color-text-light-1);
+}
+
+form .form-group input {
+  flex: 1;
+  padding: 4px;
+  background: #222;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 3px;
+}
+
+form button.button {
+  width: 100%;
+  padding: 6px;
+  background: var(--color-background-primary);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button.button:hover {
+  background: var(--color-background-dark);
+}
+💡 Next Steps
+Would you like me to:
+
+Register this stylesheet in module.json or module.js?
+
+Proceed with another HTML or JS file?
+
