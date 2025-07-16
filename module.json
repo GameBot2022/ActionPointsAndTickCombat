@@ -2,11 +2,28 @@
   "id": "Runequest_Glornatha_Replacing_Strike_Ranks_with_Action_Points_and_Speed",
   "title": "TickPoint Combat",
   "description": "Replacing the standard Runequest Glorantha Strike Rank system with Action Points and Speed.",
+  "compatibility": {
+    "minimum": 11,
+    "verified": 12, 13
+  },  
   "version": "1.0.0",
-  "author": "OpenAI ChatGPT",
-  "minimumCoreVersion": "10",
-  "compatibleCoreVersion": "11",
-  "systems": ["rqg"],
+  "authors": [
+    {
+      "name": "Gamebot2022",
+      "email": "someone@somewhere.com"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "rqg",
+        "type": "system",
+        "compatibility": {
+          "minimum": "3.3.0"
+        }
+      }
+    ]
+  },
   "scripts": [
     "scripts/combat-tracker.js",
     "scripts/history-log.js",
