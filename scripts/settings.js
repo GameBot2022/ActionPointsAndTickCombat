@@ -3,6 +3,37 @@
 const MODULE_ID = "tickpoint-combat";
 
 export function registerSettings() {
+
+// Allow GMs to toggle the Quick Action panel's visibility. This setting will:
+// Appear in the module’s Settings panel.
+// Persist between sessions.
+// Automatically open or close the Quick Action panel based on the setting value.
+// Allow players to toggle their own Quick Action panel visibility if desired.
+  
+  game.settings.register("tickpoint-combat", "showQuickActionPanel", {
+  name: "Show Quick Action Panel",
+  hint: "Toggle the player-facing Quick Action panel visibility.",
+  scope: "client",         // client-level so each player controls their own view
+  config: true,
+  type: Boolean,
+  default: true,
+  onChange: (value) => {
+    // Open or close the panel when the setting changes
+    const existingApp = ui.windows.find(w => w.id === "tickpoint-quick-actions");
+    if (value) {
+      if (!existingApp) {
+        import("./ui/quick-actions.js").then(module => {
+          const panel = new module.QuickActionPanel();
+          panel.render(true);
+        });
+      }
+    } else {
+      if (existingApp) existingApp.close();
+    }
+  }
+});
+
+  
   // Speed formula
   game.settings.register(MODULE_ID, "speedFormula", {
     name: "Speed Formula",
