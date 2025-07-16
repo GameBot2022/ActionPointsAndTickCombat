@@ -57,6 +57,31 @@ Hooks.on("ready", async () => {
   }
 });
 
+// Auto-Open the Panel for Players When Enabled
+
+Hooks.once("ready", () => {
+  if (game.settings.get("tickpoint-combat", "showQuickActionPanel")) {
+    import("./ui/quick-actions.js").then(module => {
+      const panel = new module.QuickActionPanel();
+      panel.render(true);
+    });
+  }
+});
+
+// Provide a Macro or UI Button for Players to Toggle the Panel
+  
+(async () => {
+  const existingApp = ui.windows.find(w => w.id === "tickpoint-quick-actions");
+  if (existingApp) {
+    existingApp.close();
+    await game.settings.set("tickpoint-combat", "showQuickActionPanel", false);
+  } else {
+    const module = await import("modules/tickpoint-combat/ui/quick-actions.js");
+    new module.QuickActionPanel().render(true);
+    await game.settings.set("tickpoint-combat", "showQuickActionPanel", true);
+  }
+})();
+
 // Clean up flags and UI on module disable/uninstall
 Hooks.on("disableModule", async (moduleData) => {
   if (moduleData.id !== MODULE_ID) return;
