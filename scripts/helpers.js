@@ -70,3 +70,75 @@ export function isCombatActive() {
   return !!game.combat && game.combat.started;
 }
 
+/**
+ * Calculate the set of ticks an actor acts on during a combat round.
+ * @param {Actor} actor - The actor whose speed is used.
+ * @param {number} maxTicks - The maximum number of ticks in the round.
+ * @returns {number[]} - Array of tick numbers (1-based) when actor acts.
+ */
+export function getActorSpeedTicks(actor, maxTicks) {
+  if (!actor) return [];
+
+  // Read configurable Speed formula from settings (example default: (DEX + SIZ + INT) / 3)
+  const formula = game.settings.get("tickpoint-combat", "speedFormula") || "(DEX + SIZ + INT) / 3";
+
+  // Gather stats - attempt to find in actor.data.data.attributes or similar
+  const dex = getStat(actor, "dex");
+  const siz = getStat(actor, "siz");
+  const intl = getStat(actor, "int");
+
+  if ([dex, siz, intl].some(s => s === null)) return [];
+
+  // Evaluate formula safely
+  let speedValue;
+  try {
+    // We replace variables with their values in the formula string
+    const expr = formula
+      .replace(/DEX/g, dex)
+      .replace(/SIZ/g, siz)
+      .replace(/INT/g, intl);
+    // eslint-disable-next-line no-eval
+    speedValue = eval(expr);
+  } catch (err) {
+    console.error("Error evaluating speed formula:", err);
+    speedValue = 1; // fallback speed
+  }
+
+  speedValue = Math.max(1, Math.floor(speedValue)); // minimum speed 1
+
+  // Spread the actor's ticks evenly across the maxTicks
+  const interval = maxTicks / speedValue;
+  const ticks = [];
+  for (let i = 0; i < speedValue; i++) {
+    // Calculate tick as 1-based integer within maxTicks
+    const tick = Math.floor(1 + i * interval);
+    ticks.push(tick > maxTicks ? maxTicks : tick);
+  }
+
+  // Remove duplicates and sort ascending
+  return Array.from(new Set(ticks)).sort((a, b) => a - b);
+}
+
+/**
+ * Helper to safely get a stat from an actor.
+ * Looks in common paths like data.data.attributes or data.data.stats
+ * @param {Actor} actor 
+ * @param {string} statName - e.g. "dex", "siz", "int"
+ * @returns {number|null} stat value or null if not found
+ */
+function getStat(actor, statName) {
+  const data = actor.data.data || {};
+  // Check possible paths for stats (customize per system)
+  const paths = [
+    `attributes.${statName}.value`,
+    `stats.${statName}.value`,
+    `abilities.${statName}.value`,
+    statName // fallback direct property on data.data
+  ];
+
+  for (const path of paths) {
+    const value = foundry.utils.getProperty(data, path);
+    if (typeof value === "number") return value;
+  }
+  return null;
+}
