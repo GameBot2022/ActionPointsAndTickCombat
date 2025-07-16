@@ -62,3 +62,11 @@ export function formatAPCostLabel(ap, options = {}) {
   return options.trailing ? `${ap} AP` : `AP: ${ap}`;
 }
 
+/**
+ * Checks whether there is an active combat encounter.
+ * @returns {boolean}
+ */
+export function isCombatActive() {
+  return !!game.combat && game.combat.started;
+}
+
