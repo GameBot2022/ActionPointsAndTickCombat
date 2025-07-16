@@ -56,3 +56,19 @@
   font-style: italic;
   margin-top: 10px;
 }
+
+// History log styles
+
+.tickpoint-history-button {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  background: #444;
+  border: 1px solid #888;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.tickpoint-history-button:hover {
+  background: #666;
+}
