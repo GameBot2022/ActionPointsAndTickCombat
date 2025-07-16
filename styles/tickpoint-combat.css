@@ -104,3 +104,78 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 0.5em;
 }
+
+#tick-tracker {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background: #222;
+  border-radius: 6px;
+  overflow-x: auto;
+  user-select: none;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ticks-container {
+  display: flex;
+  gap: 8px;
+}
+
+.tick {
+  position: relative;
+  width: 48px;
+  height: 80px;
+  background: #444;
+  border-radius: 6px;
+  text-align: center;
+  padding: 4px;
+  box-sizing: border-box;
+  cursor: default;
+  transition: background-color 0.3s ease;
+}
+
+.tick.current-tick {
+  background: #2ecc71;
+  box-shadow: 0 0 10px #2ecc71;
+}
+
+.tick-number {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.actors-on-tick {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.actor-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+}
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #3498db;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
