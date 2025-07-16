@@ -1,3 +1,5 @@
+THIS IS IN DEVELOPMENT AND IS NOT CURRENTLY USABLE. PLEASE DO NOT INSTALL IT.
+
 # TickPoint Combat
 
 A tactical, tick-based action point combat system for RuneQuest Glorantha in Foundry VTT.
