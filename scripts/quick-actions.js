@@ -2,7 +2,14 @@
 
 const MODULE_ID = "tickpoint-combat";
 
+import { isCombatActive } from "../scripts/helpers.js";
+
 export class QuickActionPanel extends Application {
+  constructor(options = {}) {
+    super(options);
+    this.actions = game.settings.get("tickpoint-combat", "customActions") || [];
+  }
+  
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: "tickpoint-quick-actions",
@@ -13,7 +20,7 @@ export class QuickActionPanel extends Application {
       height: "auto",
       resizable: true,
       classes: ["tickpoint-quick"],
-    });
+    });    
   }
 
   getData() {
@@ -49,6 +56,19 @@ export class QuickActionPanel extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // If not in combat, drop out
+    
+  html.find("button.action-button").click(this._onActionClick.bind(this));
+  }
+
+  _onActionClick(event) {
+    event.preventDefault();
+
+    if (!isCombatActive()) {
+      ui.notifications.warn("Quick actions can only be used during active combat.");
+      return;
+    }
+    
     html.find(".quick-action-button").on("click", async (ev) => {
       const index = ev.currentTarget.dataset.index;
       const actions = game.settings.get(MODULE_ID, "customActions") || [];
