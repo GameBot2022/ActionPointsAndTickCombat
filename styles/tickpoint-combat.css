@@ -29,3 +29,58 @@
   color: #e67e22;
   margin-left: 6px;
 }
+
+.tickpoint-history-log {
+  padding: 1em;
+}
+
+.tickpoint-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-controls button {
+  margin-left: 0.5em;
+}
+
+.tickpoint-log-entries {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+.tickpoint-log-entries li {
+  padding: 0.5em;
+  border-bottom: 1px solid #ccc;
+}
+
+.tickpoint-log-entries li.cancelled {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.log-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+}
+
+.log-status {
+  color: red;
+  margin-left: 0.5em;
+}
+
+.log-summary {
+  margin-top: 0.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-detail {
+  background: none;
+  border: none;
+  color: var(--color-text-light-1);
+  cursor: pointer;
+}
