@@ -88,6 +88,29 @@ Handlebars.registerHelper("timestamp", function (ts) {
   return new Date(ts).toLocaleString();
 });
 
+// Add log to the GM menu
+
+Hooks.once("ready", () => {
+  if (!game.user.isGM) return;
+
+  const button = $('<button class="tickpoint-history-button"><i class="fas fa-history"></i> Action History</button>');
+  button.css({
+    margin: "5px 0",
+    width: "100%"
+  });
+
+  button.on("click", () => {
+    const { HistoryLog } = window.tickpointCombat;
+    new HistoryLog().render(true);
+  });
+
+  // Insert into the UI — below the Combat tab
+  const controls = $("#sidebar #combat");
+  if (controls.length > 0) {
+    controls.append(button);
+  }
+});
+
 // Clean up flags and UI on module disable/uninstall
 Hooks.on("disableModule", async (moduleData) => {
   if (moduleData.id !== MODULE_ID) return;
