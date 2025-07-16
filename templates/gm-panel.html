@@ -1,0 +1,21 @@
+<!-- File: modules/tickpoint-combat/templates/gm-panel.html -->
+<form class="tickpoint-gm-panel">
+  <h2>Custom Actions</h2>
+  <div id="custom-actions-list">
+    {{#each customActions}}
+      <div class="form-group custom-action-row">
+        <input type="text" value="{{this.name}}" data-index="{{@index}}" data-field="name" class="custom-action" />
+        <input type="number" value="{{this.cost}}" data-index="{{@index}}" data-field="cost" class="custom-action" />
+        <input type="text" value="{{this.category}}" data-index="{{@index}}" data-field="category" class="custom-action" />
+        <input type="text" value="{{this.icon}}" data-index="{{@index}}" data-field="icon" class="custom-action" placeholder="fa-solid fa-star"/>
+        <button type="button" class="delete-action" data-index="{{@index}}">✖</button>
+      </div>
+    {{/each}}
+  </div>
+  <button type="button" id="add-action">➕ Add Action</button>
+
+  <hr/>
+  <h2>Action Log</h2>
+  <button type="button" id="export-log" {{#unless hasLogs}}disabled{{/unless}}>📁 Export Log</button>
+  <button type="button" id="clear-log" {{#unless hasLogs}}disabled{{/unless}}>🗑️ Clear Log</button>
+</form>
