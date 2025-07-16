@@ -45,7 +45,7 @@
     "scripts/cleanup.js"
   ],
   "styles": [
-    "styles/tickpoint-combat.css"
+    "styles/tickpoint-combat.css",
     "styles/custom-actions.css",
     "styles.css"
             ],
