@@ -1,0 +1,37 @@
+<!-- File: modules/tickpoint-combat/templates/history-log.html -->
+
+<section class="tickpoint-history-log">
+  <header class="tickpoint-history-header">
+    <h2>Action History</h2>
+    {{#if user.isGM}}
+      <div class="history-controls">
+        <button type="button" class="log-export"><i class="fas fa-download"></i> Export</button>
+        <button type="button" class="log-clear"><i class="fas fa-trash"></i> Clear</button>
+      </div>
+    {{/if}}
+  </header>
+
+  {{#if entries.length}}
+    <ul class="tickpoint-log-entries">
+      {{#each entries as |entry|}}
+        <li class="log-entry {{#if entry.cancelled}}cancelled{{/if}}">
+          <div class="log-meta">
+            <strong>{{entry.actorName}}</strong>
+            <span class="log-time">{{timestamp entry.timestamp}}</span>
+            {{#if entry.cancelled}}<span class="log-status">[CANCELLED]</span>{{/if}}
+          </div>
+          <div class="log-summary">
+            {{entry.summary}}
+            {{#if entry.detail}}
+              <button class="log-detail" data-entry-id="{{entry.id}}">
+                <i class="fas fa-info-circle"></i> Details
+              </button>
+            {{/if}}
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p class="empty-log">No actions recorded yet.</p>
+  {{/if}}
+</section>
