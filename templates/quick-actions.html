@@ -1,20 +1,35 @@
 <!-- File: modules/tickpoint-combat/templates/quick-actions.html -->
-<div class="quick-actions-panel">
-  <p>Action Points: <strong>{{currentAP}} / {{maxAP}}</strong></p>
 
-  {{#each categorizedActions as |actions category|}}
-    <h3>{{category}}</h3>
-    <div class="action-grid">
-      {{#each actions}}
-        <button
-          class="quick-action-button"
-          data-index="{{@index}}"
-          title="{{tooltip}}"
-          {{#if disabled}}disabled{{/if}}
-        >
-          {{#if icon}}<i class="{{icon}}"></i> {{/if}}{{name}}
-        </button>
-      {{/each}}
-    </div>
-  {{/each}}
-</div>
+<section class="quick-actions-panel">
+  <h2>Available Actions</h2>
+
+  <div class="ap-display">
+    <strong>Current AP:</strong> {{currentAP}}
+  </div>
+
+  <ul class="quick-action-list">
+    {{#each actions}}
+    <li class="quick-action {{#if (lt ../currentAP this.apCost)}}disabled{{/if}}" 
+        data-index="{{@index}}" 
+        title="{{this.description}}">
+      <div class="action-icon">
+        {{#if this.icon}}
+          <img src="{{this.icon}}" alt="{{this.label}}" width="24" height="24" />
+        {{else}}
+          <i class="fas fa-bolt"></i>
+        {{/if}}
+      </div>
+      <div class="action-label">
+        <strong>{{this.label}}</strong>
+        <span class="ap-cost">({{this.apCost}} AP)</span>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+
+  {{#unless canAct}}
+  <div class="no-action-warning">
+    You can't act on this tick.
+  </div>
+  {{/unless}}
+</section>
