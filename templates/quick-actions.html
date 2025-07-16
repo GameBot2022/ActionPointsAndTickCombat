@@ -1,0 +1,20 @@
+<!-- File: modules/tickpoint-combat/templates/quick-actions.html -->
+<div class="quick-actions-panel">
+  <p>Action Points: <strong>{{currentAP}} / {{maxAP}}</strong></p>
+
+  {{#each categorizedActions as |actions category|}}
+    <h3>{{category}}</h3>
+    <div class="action-grid">
+      {{#each actions}}
+        <button
+          class="quick-action-button"
+          data-index="{{@index}}"
+          title="{{tooltip}}"
+          {{#if disabled}}disabled{{/if}}
+        >
+          {{#if icon}}<i class="{{icon}}"></i> {{/if}}{{name}}
+        </button>
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
