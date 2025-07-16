@@ -22,6 +22,6 @@
     }
   ],
   "url": "https://example.com/tickpoint-combat",
-  "manifest": "https://example.com/tickpoint-combat/module.json",
-  "download": "https://example.com/tickpoint-combat/tickpoint-combat.zip"
+  "manifest": "https://github.com/GameBot2022/tickpoint-combat/module.json",
+  "download": "https://github.com/GameBot2022/tickpoint-combat/tickpoint-combat.zip"
 }
