@@ -1,0 +1,19 @@
+.quick-action-panel .quick-action {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+  padding: 4px 6px;
+  border: 1px solid #666;
+  border-radius: 6px;
+  background: #222;
+  color: #ddd;
+}
+
+.quick-action-panel .quick-action[disabled] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.quick-action-panel .action-icon {
+  margin-right: 8px;
+}
