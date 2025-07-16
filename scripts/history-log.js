@@ -1,120 +1,131 @@
-// Continued file: modules/tickpoint-combat/ui/history-log.js
+// File: modules/tickpoint-combat/api/history-log.js
 
-export async function addHistoryLog(actor, description, apCost, privateDetails = false) {
-  const privateToOthers = actor.id !== game.user.character?.id || privateDetails;
-  const content = privateToOthers ? `An action was taken.` : `${description} (-${apCost} AP)`;
-  const message = await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content
-  });
-  await message.setFlag("tickpoint-combat", "history", true);
+export class HistoryLog {
+  static STORAGE_KEY = "tickpoint-combat.historyLog";
+
+  static async addEntry(entry) {
+    const log = await this._getLog();
+    log.push({
+      id: randomID(),
+      timestamp: Date.now(),
+      ...entry
+    });
+    await this._saveLog(log);
+    ui.notifications.info("Action logged.");
+    Hooks.callAll("tickpointHistoryUpdated", log);
+  }
+
+  static async getVisibleEntries(forUser) {
+    const log = await this._getLog();
+
+    return log.map((entry) => {
+      const isGM = forUser.isGM;
+      const isOwner = entry.actorUuid && forUser.hasPermission(entry.actorUuid, "OWNER");
+
+      if (isGM || isOwner) return entry;
+
+      return {
+        id: entry.id,
+        timestamp: entry.timestamp,
+        summary: entry.summary || "An action was taken.",
+        actorName: entry.actorName
+      };
+    });
+  }
+
+  static async exportLog() {
+    const log = await this._getLog();
+    const dataStr = JSON.stringify(log, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    saveAs(blob, "tickpoint-history-log.json");
+  }
+
+  static async clearLog() {
+    await game.settings.set("tickpoint-combat", this.STORAGE_KEY, []);
+    Hooks.callAll("tickpointHistoryUpdated", []);
+  }
+
+  static async confirmAndClear() {
+    const confirmed = await Dialog.confirm({
+      title: "Clear History Log?",
+      content: "<p>This will permanently delete all history entries. Are you sure?</p>"
+    });
+    if (confirmed) await this.clearLog();
+  }
+
+  static async _getLog() {
+    return game.settings.get("tickpoint-combat", this.STORAGE_KEY) || [];
+  }
+
+  static async _saveLog(log) {
+    await game.settings.set("tickpoint-combat", this.STORAGE_KEY, log);
+  }
+
+  static async deleteEntry(entryId) {
+    const log = await this._getLog();
+    const newLog = log.filter((entry) => entry.id !== entryId);
+    await this._saveLog(newLog);
+    Hooks.callAll("tickpointHistoryUpdated", newLog);
+  }
+
+  static async markCancelled(entryId) {
+    const log = await this._getLog();
+    const entry = log.find(e => e.id === entryId);
+    if (entry) {
+      entry.cancelled = true;
+      await this._saveLog(log);
+      Hooks.callAll("tickpointHistoryUpdated", log);
+    }
+  }
+
+  static renderLogPanel(user) {
+    new HistoryLogPanel(user).render(true);
+  }
 }
 
-// Tick Initiative UI Highlight Update (combat-tracker.js)
-Hooks.on("renderCombatTracker", (app, html, data) => {
-  const combat = game.combat;
-  if (!combat) return;
-
-  for (let combatant of combat.combatants) {
-    const actor = combatant.actor;
-    const ticks = getActorSpeedTicks(actor);
-    const listItem = html.find(`[data-combatant-id='${combatant.id}']`);
-    if (!listItem.length) continue;
-
-    const tickBar = document.createElement("div");
-    tickBar.classList.add("tick-highlight-bar");
-
-    for (let i = 0; i < 24; i++) {
-      const tick = document.createElement("div");
-      tick.classList.add("tick");
-      if (ticks.includes(i)) tick.classList.add("active-tick");
-      tickBar.appendChild(tick);
-    }
-
-    const longAction = actor.getFlag("tickpoint-combat", "longAction");
-    if (longAction) {
-      const progress = document.createElement("div");
-      progress.classList.add("long-action-progress");
-      progress.title = `${longAction.description ?? "Performing action"}: ${longAction.spent}/${longAction.total} AP`;
-      progress.style.cursor = "pointer";
-
-      const bar = document.createElement("div");
-      bar.classList.add("progress-bar");
-      const percent = Math.min(100, Math.floor((longAction.spent / longAction.total) * 100));
-      bar.style.width = `${percent}%`;
-      bar.innerText = `${longAction.spent}/${longAction.total}`;
-
-      if (longAction.cancelled) {
-        progress.classList.add("cancelled");
-        bar.innerText = `Cancelled`;
-        bar.style.backgroundColor = "#a00";
-      }
-
-      progress.appendChild(bar);
-
-      const isOwner = game.user.isGM || actor.isOwner;
-      if (isOwner && !longAction.cancelled) {
-        const cancelBtn = document.createElement("button");
-        cancelBtn.classList.add("cancel-long-action");
-        cancelBtn.innerText = "✖";
-        cancelBtn.title = "Cancel this long action";
-        cancelBtn.addEventListener("click", async (ev) => {
-          ev.stopPropagation();
-          const currentTick = game.combat?.round % 24;
-          if (game.user.isGM || getActorSpeedTicks(actor).includes(currentTick)) {
-            longAction.cancelled = true;
-            await actor.setFlag("tickpoint-combat", "longAction", longAction);
-            ui.notifications.info(`${actor.name}'s long action was cancelled.`);
-            addHistoryLog(actor, `${longAction.description} was cancelled`, 0, true);
-          }
-        });
-        progress.appendChild(cancelBtn);
-      }
-
-      progress.addEventListener("click", () => {
-        if (isOwner && longAction.details) {
-          new Dialog({
-            title: `${actor.name} Long Action Details`,
-            content: `<p><strong>Action:</strong> ${longAction.description}</p><p><strong>Progress:</strong> ${longAction.spent}/${longAction.total} AP</p><p><strong>Details:</strong> ${longAction.details}</p>`,
-            buttons: { ok: { label: "Close" } }
-          }).render(true);
-        }
-      });
-
-      listItem.append(progress);
-    }
-
-    listItem.append(tickBar);
+class HistoryLogPanel extends Application {
+  constructor(user, options = {}) {
+    super(options);
+    this.user = user;
   }
-});
 
-function getActorSpeedTicks(actor) {
-  const speed = actor.getFlag("tickpoint-combat", "speed") ?? 1;
-  const ticks = [];
-  for (let i = 0; i < 24; i++) {
-    if (i % Math.floor(24 / speed) === 0) ticks.push(i);
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      id: "tickpoint-history-log",
+      title: "Action History Log",
+      template: "modules/tickpoint-combat/templates/history-log.html",
+      width: 600,
+      height: "auto",
+      resizable: true,
+    });
   }
-  return ticks;
+
+  async getData() {
+    const entries = await HistoryLog.getVisibleEntries(this.user);
+    return { entries };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.find(".log-entry").hover(
+      function () { $(this).addClass("hover"); },
+      function () { $(this).removeClass("hover"); }
+    );
+
+    html.find(".log-detail").click(ev => {
+      const entryId = ev.currentTarget.dataset.entryId;
+      const entry = this.object?.find(e => e.id === entryId);
+      if (entry && entry.detail) {
+        new Dialog({
+          title: "Action Detail",
+          content: `<pre>${entry.detail}</pre>`,
+          buttons: { ok: { label: "Close" } }
+        }).render(true);
+      }
+    });
+
+    html.find(".log-export").click(() => HistoryLog.exportLog());
+    html.find(".log-clear").click(() => HistoryLog.confirmAndClear());
+  }
 }
-
-// Long Action Tick Processor
-Hooks.on("updateCombat", async (combat, changed, options, userId) => {
-  const currentTick = combat.round % 24;
-
-  for (let combatant of combat.combatants) {
-    const actor = combatant.actor;
-    const ticks = getActorSpeedTicks(actor);
-    if (!ticks.includes(currentTick)) continue;
-
-    const longAction = actor.getFlag("tickpoint-combat", "longAction");
-    if (!longAction || longAction.cancelled) continue;
-
-    longAction.spent += 1;
-    await actor.setFlag("tickpoint-combat", "longAction", longAction);
-
-    if (longAction.spent >= longAction.total) {
-      await actor.unsetFlag("tickpoint-combat", "longAction");
-      ui.notifications.info(`${actor.name} completed their long action.`);
-    }
-  }
-});
