@@ -4,6 +4,8 @@ const MODULE_ID = "tickpoint-combat";
 
 // File: modules/tickpoint-combat/ui/gm-panel.js
 
+import { parseIntSafe } from "../scripts/helpers.js";
+
 export class CustomActionManager extends FormApplication {
   constructor(object = {}, options = {}) {
     super(object, options);
@@ -55,7 +57,7 @@ export class CustomActionManager extends FormApplication {
       const form = ev.currentTarget;
       const data = new FormData(form);
       const action = Object.fromEntries(data.entries());
-      action.apCost = parseInt(action.apCost);
+      action.apCost = parseIntSafe(action.apCost);
       this.actions.push(action);
       form.reset();
       this._save();
@@ -67,7 +69,7 @@ export class CustomActionManager extends FormApplication {
       const form = ev.currentTarget;
       const data = new FormData(form);
       const action = Object.fromEntries(data.entries());
-      action.apCost = parseInt(action.apCost);
+      action.apCost = parseIntSafe(action.apCost);
       this.actions[index] = action;
       form.reset();
       delete form.dataset.editIndex;
