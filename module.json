@@ -4,7 +4,7 @@
   "description": "Replacing the standard Runequest Glorantha Strike Rank system with Action Points and Speed.",
   "compatibility": {
     "minimum": 11,
-    "verified": 12, 13
+    "verified": 12,
   },  
   "version": "1.0.0",
   "authors": [
