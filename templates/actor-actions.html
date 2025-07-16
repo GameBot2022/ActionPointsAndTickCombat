@@ -1,0 +1,28 @@
+// Display the Hint in Template
+
+{{#each actions}}
+  <div class="action {{#if (gt ap ../currentAP)}}disabled{{/if}}"
+       data-action-id="{{id}}"
+       title="{{#if (gt ap ../currentAP)}}Not enough Action Points (need {{ap}}, have {{../currentAP}}){{/if}}">
+    {{name}} ({{ap}} AP)
+    <span class="tick-hint"> – {{nextTickHint}}</span>
+  </div>
+{{/each}}
+
+.tick-hint {
+  font-size: 0.8em;
+  color: #888;
+  margin-left: 4px;
+}
+
+// Preview for Long Actions 
+
+if (longAction) {
+  const ticksRemaining = Math.ceil((longAction.requiredAP - longAction.spentAP) / actor.system.speed);
+  longAction.remainingTicks = ticksRemaining;
+}
+{{#if longAction}}
+  <div class="long-action-status">
+    Performing: {{longAction.label}} – Est. {{longAction.remainingTicks}} tick(s) remaining
+  </div>
+{{/if}}
