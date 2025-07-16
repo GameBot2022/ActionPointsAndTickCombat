@@ -15,7 +15,7 @@ A tactical, tick-based action point combat system for RuneQuest Glorantha in Fou
 ## Installation
 Use the Foundry Module Manager and install via this manifest URL:
 ```
-https://example.com/tickpoint-combat/module.json
+https://gamebot2022.github.io/ActionPointsAndTickCombat/module.json
 ```
 
 ## License
