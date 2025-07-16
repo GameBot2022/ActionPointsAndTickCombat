@@ -16,46 +16,43 @@
   cursor: not-allowed;
 }
 
-
-
-
-
-// Old code - can probably remove now
-
-
-.quick-action-panel {
-  padding: 8px;
+.quick-actions-panel {
+  padding: 10px;
 }
 
-.quick-action-panel .ap-display {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.quick-action-panel .quick-action {
-  display: flex;
-  align-items: center;
-  margin: 4px 0;
-  padding: 4px 6px;
-  border: 1px solid #666;
-  border-radius: 6px;
-  background: #222;
-  color: #ddd;
-}
-
-.quick-action-panel .quick-action[disabled] {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.quick-action-panel .action-icon {
-  margin-right: 8px;
+.quick-action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .quick-action {
-  display: block;
-  width: 100%;
-  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 5px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
+.quick-action.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.action-icon img {
+  display: block;
+}
+
+.ap-display {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.no-action-warning {
+  color: #c00;
+  font-style: italic;
+  margin-top: 10px;
+}
