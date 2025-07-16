@@ -1,0 +1,17 @@
+<div id="tick-tracker" class="tickpoint-combat">
+  <div class="ticks-container">
+    {{#each ticks}}
+      <div class="tick" data-tick="{{this.number}}" title="Tick {{this.number}}">
+        <div class="tick-number">{{this.number}}</div>
+        <div class="actors-on-tick">
+          {{#each this.actors}}
+            <img class="actor-icon" src="{{this.img}}" title="{{this.name}}" />
+          {{/each}}
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: {{this.progress}}%;"></div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
