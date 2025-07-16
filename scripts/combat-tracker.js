@@ -1,3 +1,18 @@
+.long-action-progress .progress-bar {
+  transition: width 0.5s ease-in-out;
+  /* existing styling here */
+}
+
+/* Additional styling for cancel button visibility */
+.cancel-long-action {
+  background-color: transparent;
+  border: none;
+  color: #c00;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
 // Continued file: modules/tickpoint-combat/ui/history-log.js
 
 export async function addHistoryLog(actor, description, apCost, privateDetails = false) {
