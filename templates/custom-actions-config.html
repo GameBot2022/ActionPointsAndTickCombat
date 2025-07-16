@@ -1,0 +1,26 @@
+<form>
+  <div class="form-group">
+    <label><strong>Custom Actions</strong></label>
+  </div>
+
+  {{#each actions as |action i|}}
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" name="name_{{i}}" value="{{action.name}}" />
+      <label>AP Cost</label>
+      <input type="number" name="apCost_{{i}}" value="{{action.apCost}}" />
+      <label>Tag</label>
+      <input type="text" name="tag_{{i}}" value="{{action.tag}}" />
+    </div>
+  {{/each}}
+
+  {{#each (range 0 2) as |i|}}
+    <div class="form-group">
+      <input type="text" name="name_{{add ../actions.length i}}" placeholder="New action name" />
+      <input type="number" name="apCost_{{add ../actions.length i}}" placeholder="AP Cost" />
+      <input type="text" name="tag_{{add ../actions.length i}}" placeholder="Tag (optional)" />
+    </div>
+  {{/each}}
+
+  <button type="submit" class="dialog-button"><i class="fas fa-save"></i> Save Actions</button>
+</form>
