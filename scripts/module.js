@@ -11,6 +11,13 @@ import { setupQuickActionsUI } from "./quick-actions-ui.js";
 
 const MODULE_ID = "tickpoint-combat";
 
+//  Ensure HistoryLog is Exposed
+
+window.tickpointCombat = {
+  ...(window.tickpointCombat || {}),
+  HistoryLog
+};
+
 Hooks.once("init", async () => {
   console.log(`${MODULE_ID} | Initializing Tickpoint Combat Module`);
 
