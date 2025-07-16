@@ -118,6 +118,12 @@ Hooks.once("ready", () => {
   }
 });
 
+// Enable the GM sidebar button if the option is on
+
+if (game.settings.get("tickpoint-combat", "showHistoryButton")) {
+  // add the GM sidebar button (as previously described)
+}
+
 // Clean up flags and UI on module disable/uninstall
 Hooks.on("disableModule", async (moduleData) => {
   if (moduleData.id !== MODULE_ID) return;
