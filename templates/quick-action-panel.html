@@ -1,0 +1,9 @@
+<div class="quick-action-panel">
+  <div class="ap-display">AP: {{ap}}</div>
+  {{#each actions}}
+    <button class="quick-action" data-ap="{{apCost}}" data-label="{{name}}" {{#if disabled}}disabled title="{{reason}}"{{/if}}>
+      <img src="{{icon}}" class="action-icon" width="24" height="24" />
+      <span class="action-label">{{name}} ({{apCost}})</span>
+    </button>
+  {{/each}}
+</div>
