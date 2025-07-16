@@ -1,147 +1,160 @@
 // File: modules/tickpoint-combat/module.js
 
-import { registerSettings } from "./settings.js";
-import { setupActionPointSystem } from "./ap-tracker.js";
-import { initializeTickScheduler } from "./tick-scheduler.js";
-import { extendItemSheets } from "./item-sheet.js";
-import { setupGMPanel } from "./gm-panel.js";
-import { addHistoryHooks } from "./history-log.js";
-import { renderCombatTrackerUI } from "./combat-tracker.js";
-import { setupQuickActionsUI } from "./quick-actions-ui.js";
+import { registerSettings } from "./scripts/settings.js";
+import { APTracker } from "./scripts/ap-tracker.js";
+import { TickScheduler } from "./scripts/tick-scheduler.js";
+import { LongActionManager } from "./scripts/long-action.js";
+import { CustomActionManager } from "./ui/gm-panel.js";
+import { QuickActionsPanel } from "./ui/quick-actions.js";
+import { TickTrackerUI } from "./ui/tick-tracker.js";
+import { HistoryLog } from "./scripts/history-log.js";
 
-const MODULE_ID = "tickpoint-combat";
+Hooks.once('init', async function() {
+  console.log("Tickpoint Combat | Initializing module");
 
-//  Ensure HistoryLog is Exposed
-
-window.tickpointCombat = {
-  ...(window.tickpointCombat || {}),
-  HistoryLog
-};
-
-Hooks.once("init", async () => {
-  console.log(`${MODULE_ID} | Initializing Tickpoint Combat Module`);
-
-  // Register custom settings
+  // Register module settings
   registerSettings();
 
-  // Register styles
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = `modules/${MODULE_ID}/styles/styles.css`;
-  document.head.appendChild(link);
+  // Initialize core module objects
+  game.tickpointCombat = {
+    apTracker: new APTracker(),
+    tickScheduler: new TickScheduler(),
+    longActionManager: new LongActionManager(),
+    customActionManager: null,
+    quickActionsPanel: null,
+    tickTrackerUI: null,
+    historyLog: null,
+  };
+
+  // Create and render Tick Tracker UI (visible for all)
+  game.tickpointCombat.tickTrackerUI = new TickTrackerUI();
+  game.tickpointCombat.tickTrackerUI.render(true);
+
+  // Optionally create and render Quick Actions Panel for players if enabled
+  if (game.settings.get("tickpoint-combat", "showQuickActionPanel")) {
+    game.tickpointCombat.quickActionsPanel = new QuickActionsPanel();
+    game.tickpointCombat.quickActionsPanel.render(true);
+  }
+
+  // Add GM-only sidebar buttons for custom actions and history log
+  if (game.user.isGM) {
+    Hooks.callAll('registerCustomActionManagerButton');
+    Hooks.callAll('registerHistoryLogButton');
+  }
 });
 
-Hooks.once("setup", () => {
-  // Extend item sheets to support AP overrides
-  extendItemSheets();
+Hooks.once('ready', async function() {
+  console.log("Tickpoint Combat | Module ready");
 
-  // Setup GM interface
-  setupGMPanel();
-
-  // Hook up action history logging
-  addHistoryHooks();
-
-  // Render enhancements on combat tracker
-  renderCombatTrackerUI();
-
-  // Setup player-facing action buttons
-  setupQuickActionsUI();
-
-  // Start tick tracking logic
-  initializeTickScheduler();
+  // If combat is active on load, start scheduling ticks and set AP for actors
+  if (game.combats.active) {
+    game.tickpointCombat.tickScheduler.startCombat(game.combats.active);
+  }
 });
 
-Hooks.on("ready", async () => {
-  console.log(`${MODULE_ID} | Ready hook fired`);
+Hooks.on('updateActor', (actor, changed, options, userId) => {
+  // React to ability changes (DEX, SIZ, INT, CON) and update AP/speed
+  if (changed.data?.abilities) {
+    game.tickpointCombat.apTracker.updateActorAttributes(actor);
+  }
+});
 
+Hooks.on('updateCombat', (combat, changed, options, userId) => {
+  // On round/turn update, update tick scheduling and AP tracking
+  if (changed.round !== undefined || changed.turn !== undefined) {
+    game.tickpointCombat.tickScheduler.updateCombatState(combat);
+    game.tickpointCombat.apTracker.handleCombatTurnChange(combat, changed);
+  }
+});
+
+Hooks.on('deleteCombat', (combat) => {
+  // Clean up on combat end
+  game.tickpointCombat.tickScheduler.endCombat();
+  game.tickpointCombat.apTracker.resetAllActors();
+});
+
+Hooks.on('renderTokenHUD', (app, html, data) => {
+  // Add quick action buttons or AP info to tokens if needed
+  if (game.tickpointCombat.quickActionsPanel) {
+    game.tickpointCombat.quickActionsPanel.addTokenButtons(app, html, data);
+  }
+});
+
+Hooks.on('renderActorSheet', (app, html, data) => {
+  // Inject AP cost overrides and AP info into actor sheets
+  game.tickpointCombat.apTracker.injectActorSheetUI(app, html, data);
+});
+
+// Register GM sidebar button to open Custom Actions Manager
+Hooks.on('registerCustomActionManagerButton', () => {
   if (!game.user.isGM) return;
-
-  // Migrate or initialize persisted data if needed
-  const initialized = game.settings.get(MODULE_ID, "initialized") || false;
-  if (!initialized) {
-    await game.settings.set(MODULE_ID, "initialized", true);
-    console.log(`${MODULE_ID} | First-time setup complete.`);
-  }
+  ui.sidebar.addButton({
+    name: "tickpointCustomActions",
+    icon: "fas fa-cogs",
+    title: "Manage Custom Actions",
+    onClick: () => {
+      if (!game.tickpointCombat.customActionManager) {
+        game.tickpointCombat.customActionManager = new CustomActionManager();
+      }
+      game.tickpointCombat.customActionManager.render(true);
+    },
+  });
 });
 
-// Auto-Open the Panel for Players When Enabled
-
-Hooks.once("ready", () => {
-  if (game.settings.get("MODULE_ID", "showQuickActionPanel")) {
-    import("./ui/quick-actions.js").then(module => {
-      const panel = new module.QuickActionPanel();
-      panel.render(true);
-    });
-  }
-});
-
-// Provide a Macro or UI Button for Players to Toggle the Panel
-  
-(async () => {
-  const existingApp = ui.windows.find(w => w.id === "tickpoint-quick-actions");
-  if (existingApp) {
-    existingApp.close();
-    await game.settings.set("tickpoint-combat", "showQuickActionPanel", false);
-  } else {
-    const module = await import("modules/tickpoint-combat/ui/quick-actions.js");
-    new module.QuickActionPanel().render(true);
-    await game.settings.set("tickpoint-combat", "showQuickActionPanel", true);
-  }
-})();
-
-// Add handlebar helper for timestamp formatting in the log
-
-Handlebars.registerHelper("timestamp", function (ts) {
-  return new Date(ts).toLocaleString();
-});
-
-// Add log to the GM menu
-
-Hooks.once("ready", () => {
+// Register GM sidebar button to open History Log panel
+Hooks.on('registerHistoryLogButton', () => {
   if (!game.user.isGM) return;
-
-  const button = $('<button class="tickpoint-history-button"><i class="fas fa-history"></i> Action History</button>');
-  button.css({
-    margin: "5px 0",
-    width: "100%"
+  ui.sidebar.addButton({
+    name: "tickpointHistoryLog",
+    icon: "fas fa-scroll",
+    title: "Tickpoint Combat History",
+    onClick: () => {
+      if (game.tickpointCombat.historyLog) {
+        game.tickpointCombat.historyLog.render(true);
+      }
+    },
   });
-
-  button.on("click", () => {
-    const { HistoryLog } = window.tickpointCombat;
-    new HistoryLog().render(true);
-  });
-
-  // Insert into the UI — below the Combat tab
-  const controls = $("#sidebar #combat");
-  if (controls.length > 0) {
-    controls.append(button);
-  }
 });
 
-// Enable the GM sidebar button if the option is on
+// Clean up module flags and UI on module disable/uninstall
+Hooks.on('closeModule', (moduleName) => {
+  if (moduleName !== "tickpoint-combat") return;
+  console.log("Tickpoint Combat | Cleaning up on module disable");
 
-if (game.settings.get("tickpoint-combat", "showHistoryButton")) {
-  // add the GM sidebar button (as previously described)
-}
-
-// Clean up flags and UI on module disable/uninstall
-Hooks.on("disableModule", async (moduleData) => {
-  if (moduleData.id !== MODULE_ID) return;
-  console.log(`${MODULE_ID} | Disabling module...`);
-
-  for (const actor of game.actors.contents) {
-    await actor.unsetFlag(MODULE_ID, "speed");
-    await actor.unsetFlag(MODULE_ID, "maxAP");
-    await actor.unsetFlag(MODULE_ID, "longAction");
-    await actor.unsetFlag(MODULE_ID, "customActions");
+  // Clear flags from all actors and combats
+  for (let actor of game.actors.contents) {
+    actor.unsetFlag("tickpoint-combat", "ap");
+    actor.unsetFlag("tickpoint-combat", "longAction");
+    actor.unsetFlag("tickpoint-combat", "customActionOverrides");
   }
 
-  if (confirm("Delete action history logs as well?")) {
-    const messages = game.messages.contents.filter(m => m.getFlag(MODULE_ID, "history"));
-    for (const msg of messages) {
-      await msg.delete();
+  for (let combat of game.combats.contents) {
+    combat.unsetFlag("tickpoint-combat", "tickData");
+  }
+
+  // Remove any temporary UI elements if needed
+  if (game.tickpointCombat.quickActionsPanel) {
+    game.tickpointCombat.quickActionsPanel.close();
+    game.tickpointCombat.quickActionsPanel = null;
+  }
+  if (game.tickpointCombat.tickTrackerUI) {
+    game.tickpointCombat.tickTrackerUI.close();
+    game.tickpointCombat.tickTrackerUI = null;
+  }
+  if (game.tickpointCombat.customActionManager) {
+    game.tickpointCombat.customActionManager.close();
+    game.tickpointCombat.customActionManager = null;
+  }
+  if (game.tickpointCombat.historyLog) {
+    game.tickpointCombat.historyLog.close();
+    game.tickpointCombat.historyLog = null;
+  }
+
+  // Optionally prompt GM to clear stored logs here
+  if (game.user.isGM) {
+    const clear = confirm("Do you want to delete Tickpoint Combat history logs?");
+    if (clear) {
+      game.settings.set("tickpoint-combat", "historyLog", []);
     }
   }
-
-  ui.notifications.info("Tickpoint Combat cleaned up successfully.");
 });
