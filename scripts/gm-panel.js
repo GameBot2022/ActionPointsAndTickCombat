@@ -26,12 +26,15 @@ export class CustomActionManager extends FormApplication {
   }
 
   getData() {
-    return {
-      actions: this.actions,
-      timestamp: getTimestamp()
-    };
-  }
-
+  return {
+    actions: this.actions.map(action => ({
+      ...action,
+      apLabel: formatAPCostLabel(action.apCost)
+    })),
+    timestamp: getTimestamp()
+  };
+}
+  
   activateListeners(html) {
     super.activateListeners(html);
 
