@@ -21,7 +21,7 @@
       "path": "lang/en.json"
     }
   ],
-  "url": "https://example.com/tickpoint-combat",
-  "manifest": "https://example.com/tickpoint-combat/module.json",
-  "download": "https://example.com/tickpoint-combat/tickpoint-combat.zip"
+  "url": "https://gamebot2022.github.io/ActionPointsAndTickCombat/",
+  "manifest": "https://gamebot2022.github.io/ActionPointsAndTickCombat/module.json",
+  "download": "https://gamebot2022.github.io/ActionPointsAndTickCombat/tickpoint-combat.zip"
 }
