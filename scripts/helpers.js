@@ -49,3 +49,16 @@ export function playActionSound(path) {
     AudioHelper.play({ src: path, volume: 0.8, autoplay: true, loop: false }, true);
   }
 }
+
+/**
+ * Formats an action point cost value for display.
+ * @param {number} ap - The action point cost.
+ * @param {object} [options] - Optional config for label style.
+ * @param {boolean} [options.trailing] - If true, formats as \"3 AP\" instead of \"AP: 3\".
+ * @returns {string}
+ */
+export function formatAPCostLabel(ap, options = {}) {
+  if (isNaN(ap)) return "";
+  return options.trailing ? `${ap} AP` : `AP: ${ap}`;
+}
+
