@@ -105,7 +105,18 @@ export function registerSettings() {
     type: Boolean,
     default: true
   });
-
+  
+  // GM sidebar toggle and enabling/disabling the log button are optional
+  
+  game.settings.register("tickpoint-combat", "showHistoryButton", {
+  name: "Show GM History Log Button",
+  hint: "Display the Action History button in the Combat sidebar (GM only).",
+  scope: "world",
+  config: true,
+  type: Boolean,
+  default: true
+});
+  
   // Internal flag to check for setup
   game.settings.register(MODULE_ID, "initialized", {
     name: "Initialized",
