@@ -60,7 +60,7 @@ Hooks.on("ready", async () => {
 // Auto-Open the Panel for Players When Enabled
 
 Hooks.once("ready", () => {
-  if (game.settings.get("tickpoint-combat", "showQuickActionPanel")) {
+  if (game.settings.get("MODULE_ID", "showQuickActionPanel")) {
     import("./ui/quick-actions.js").then(module => {
       const panel = new module.QuickActionPanel();
       panel.render(true);
