@@ -82,6 +82,12 @@ Hooks.once("ready", () => {
   }
 })();
 
+// Add handlebar helper for timestamp formatting in the log
+
+Handlebars.registerHelper("timestamp", function (ts) {
+  return new Date(ts).toLocaleString();
+});
+
 // Clean up flags and UI on module disable/uninstall
 Hooks.on("disableModule", async (moduleData) => {
   if (moduleData.id !== MODULE_ID) return;
