@@ -20,3 +20,11 @@ Hooks.once("ready", () => {
     });
   }
 });
+
+// Update custom actions setting to support the new shapes
+{
+  "name": "Cast Spirit Spell",
+  "apCost": 5,
+  "category": "Magic",
+  "icon": "icons/magic/fire/beam-jet-stream-yellow.webp"
+}
