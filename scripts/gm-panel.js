@@ -4,7 +4,7 @@ const MODULE_ID = "tickpoint-combat";
 
 // File: modules/tickpoint-combat/ui/gm-panel.js
 
-import { parseIntSafe } from "../scripts/helpers.js";
+import { parseIntSafe, getTimestamp } from "../scripts/helpers.js";
 
 export class CustomActionManager extends FormApplication {
   constructor(object = {}, options = {}) {
@@ -27,7 +27,8 @@ export class CustomActionManager extends FormApplication {
 
   getData() {
     return {
-      actions: this.actions
+      actions: this.actions,
+      timestamp: getTimestamp()
     };
   }
 
