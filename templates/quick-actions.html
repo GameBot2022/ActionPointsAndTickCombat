@@ -23,6 +23,12 @@
         <strong>{{this.label}}</strong>
         <span class="ap-cost">({{this.apCost}} AP)</span>
       </div>
+      <button
+      class="action-button"
+      data-action-id="{{id}}"
+      {{#unless ../isCombat}}disabled title="Available only during combat"{{/unless}}>
+      <i class="{{icon}}"></i> {{label}} (AP: {{apCost}})
+      </button>
     </li>
     {{/each}}
   </ul>
