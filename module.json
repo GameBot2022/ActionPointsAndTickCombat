@@ -36,7 +36,7 @@
   "packs": [],
   "assets": [],
   "url": "https://github.com/GameBot2022/ActionPointsAndTickCombat",
-  "manifest": "https://gamebot2022.github.io/ActionPointsAndTickCombat/module.json",
-  "download": "https://github.com/GameBot2022/ActionPointsAndTickCombat/tick-combat.zip",
+  "manifest": "https://gamebot2022.github.io/ActionPointsAndTickCombat/blob/main/module.json",
+  "download": "https://github.com/GameBot2022/ActionPointsAndTickCombat/blob/main/tick-combat.zip",
   "license": "MIT"
 }
