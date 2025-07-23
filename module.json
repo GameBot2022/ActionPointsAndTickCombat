@@ -1,0 +1,49 @@
+{
+  "id": "Runequest_Glornatha_Replacing_Strike_Ranks_with_Action_Points_and_Speed",
+  "title": "TickPoint Combat",
+  "description": "Advanced tick-based combat and AP system for Foundry VTT with customizable actions, GM panels, and animated tick tracking.",
+  "version": "1.0.12",
+  "author": "GameBot2022",
+  "minimumCoreVersion": "11",
+  "compatibleCoreVersion": "13",
+  "scripts": [],
+  "esmodules": [
+    "modules/module.js",
+    "modules/ap-tracker.js",
+    "modules/ap-utils.js",
+    "modules/cleanup.js",
+    "modules/combat-enhancements.js",
+    "modules/custom-actions.js",
+    "modules/custom-actions-panel.js",
+    "modules/gm-panel.js",
+    "modules/helpers.js",
+    "modules/history-log.js",
+    "modules/long-action.js",
+    "modules/quick-actions.js",
+    "modules/quick-actions-panel.js",
+    "modules/reset-log-dialog.js",    
+    "modules/settings.js",
+    "modules/tick-scheduler.js",
+    "modules/tick-tracker.js"
+  ],
+  "styles": [
+    "styles/tickpoint-combat.css"
+  ],
+  "languages": [],
+  "templates": [
+    "templates/custom-actions.html",
+    "templates/custom-actions-panel.html",
+    "templates/gm-panel.html",
+    "templates/history-log.html",
+    "templates/long-action.html",
+    "templates/quick-actions.html",
+    "templates/reset-log-dialog.html",
+    "templates/tick-tracker.html"
+  ],
+  "packs": [],
+  "assets": [],
+  "url": "https://github.com/GameBot2022/ActionPointsAndTickCombat",
+  "manifest": "https://raw.githubusercontent.com/GameBot2022/ActionPointsAndTickCombat/main/module.json",
+  "download": "https://raw.githubusercontent.com/GameBot2022/ActionPointsAndTickCombat/main/tick-combat.zip",
+  "license": "MIT"
+}
